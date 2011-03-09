@@ -1,4 +1,5 @@
 module SmartMeta
+
   def smart_meta_for(kind)
     key = [params[:controller], params[:action], kind].compact.join('.')
     if (title_template = translation_for(key))
@@ -7,11 +8,17 @@ module SmartMeta
         hash[arg.to_sym] = value_from_arg(arg)
         hash
       end
-      I18n.t(key, args)
+      ret = "#{title_template}"
+      args.each do |k,v|
+        k = "\{\{" + "#{k}" + "\}\}"
+        ret.sub!(k, "#{v}")
+      end 
+      #I18n.t(key, args).empty? ? nil : I18n.t(key, args)
+      ret
     end
   end
-
-  def smart_description
+	
+	def smart_description
     smart_meta_for(:description)
   end
 
